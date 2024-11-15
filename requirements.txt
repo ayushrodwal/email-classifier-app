@@ -1,4 +1,6 @@
+--upgrade pip
 streamlit==1.17.0
 transformers==4.31.0
 torch==2.2.0
+tokenizers==0.13.3
 requests==2.31.0
