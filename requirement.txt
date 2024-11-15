@@ -1,4 +1,5 @@
 streamlit
-transformers
-torch
+transformers==4.34.0  # Replace with the latest compatible version
 language-tool-python
+torch
+
