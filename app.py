@@ -1,5 +1,5 @@
 import streamlit as st
-import transformer
+import transformers
 from transformers import pipeline
 classifier = pipeline("sentiment-analysis", model="distilbert-base-uncased")
 
