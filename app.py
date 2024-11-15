@@ -1,19 +1,17 @@
 import streamlit as st
 from transformers import pipeline
-import requests  # For alternative grammar check API (if needed)
 
-# Load sentiment analysis pipeline
-@st.cache_resource
-def load_sentiment_pipeline():
-    return pipeline('sentiment-analysis', model="nlptown/bert-base-multilingual-uncased-sentiment")
+# Initialize the sentiment analysis pipeline
+sentiment_pipeline = pipeline(
+    'sentiment-analysis', model="nlptown/bert-base-multilingual-uncased-sentiment")
 
-sentiment_pipeline = load_sentiment_pipeline()
+# Streamlit Application
+st.title("Email Classification and Analysis App")
 
-# Placeholder grammar check function (no Java required)
-def check_grammar(content):
-    return "Grammar check is currently disabled."
+# Input from the user
+email_content = st.text_area("Enter the email content:")
 
-# Email classification function
+# Function to classify email content
 def classify_email(content):
     if "job opening" in content.lower() or "interview" in content.lower():
         return "Job-Related"
@@ -24,38 +22,35 @@ def classify_email(content):
     else:
         return "Professional"
 
-# Automated reply generator
-def generate_reply(classification):
+# Function to generate a reply based on classification
+def generate_reply(content, classification):
     if classification == "Job-Related":
-        return "Thank you for sharing this opportunity. I am very interested in learning more about the job opening at Microsoft."
+        return "Thank you for sharing this opportunity. I am interested in learning more about the job opening."
     elif classification == "Personal":
         return "Thank you for reaching out! I'll get back to you shortly."
     elif classification == "Document Checking and Editing":
-        return "I've received your document. I'll review it and get back to you with feedback soon."
+        return "I've received your document. I'll review it and provide feedback soon."
     else:
-        return "Thank you for the information. I look forward to further communication."
+        return "Thank you for the information. Looking forward to further communication."
 
-# Sentiment analysis function
+# Analyze sentiment of the email content
 def analyze_sentiment(content):
     sentiment_result = sentiment_pipeline(content)[0]
-    return f"{sentiment_result['label']} (Confidence: {sentiment_result['score']:.2f})"
+    label = sentiment_result['label']
+    confidence = sentiment_result['score']
+    return f"Sentiment: {label} (Confidence: {confidence:.2f})"
 
-# Streamlit App UI
-st.title("Email Classifier and Analyzer")
+# Display results
+if email_content:
+    classification = classify_email(email_content)
+    automated_reply = generate_reply(email_content, classification)
+    sentiment = analyze_sentiment(email_content)
 
-email_content = st.text_area("Enter Email Content:", height=200)
+    st.subheader("Classification:")
+    st.write(classification)
 
-if st.button("Analyze"):
-    if email_content.strip():
-        classification = classify_email(email_content)
-        reply = generate_reply(classification)
-        sentiment = analyze_sentiment(email_content)
-        grammar = check_grammar(email_content)
+    st.subheader("Automated Reply:")
+    st.write(automated_reply)
 
-        st.subheader("Results")
-        st.write(f"**Classification:** {classification}")
-        st.write(f"**Automated Reply:** {reply}")
-        st.write(f"**Sentiment Analysis:** {sentiment}")
-        st.write(f"**Grammar Check:** {grammar}")
-    else:
-        st.warning("Please enter email content to analyze!")
+    st.subheader("Sentiment Analysis:")
+    st.write(sentiment)
