@@ -1,9 +1,9 @@
 import streamlit as st
-from transformers import pipeline
-import language_tool_python
 import os
 os.system("pip install transformers")
 from transformers import pipeline
+
+import language_tool_python
 
 
 # Load sentiment analysis pipeline
